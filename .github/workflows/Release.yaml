@@ -2,12 +2,6 @@ name: Main - Upload Apps Images/Packages
 
 on: 
   push:
-    branches: 
-      - main
-    paths:
-      # Only run this when apps are updated.
-      - 'apps/**'
-      - '!apps/runtime/**'
     
 jobs:
   Release-Apps-Images:
