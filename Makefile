@@ -75,6 +75,16 @@ build_push_app_images:
 	sh ./deployment/build-push-workload-image.sh fulfilmentprocessor-redis ./apps/redis $(GITHUBORG) $(GITHUBREPO)
 	sh ./deployment/build-push-workload-image.sh orderstatusprovider ./apps/shared $(GITHUBORG) $(GITHUBREPO)
 
+aio: deploy_aio deploy_nontls_listener deploy_app_orderprocessor deploy_app_fulfilmentprocessor
+
+deploy_aio:
+	@echo "Deploying aio app..."
+	sh ./deployment/deploy_aio.sh
+
+deploy_nontls_listener:
+	@echo "Deploying nontls listener..."
+	sh ./deployment/deploy_nontls_listener.sh
+
 clean:
 	@echo "Cleaning up..."
 	k3d cluster delete $(K3DCLUSTERNAME)
