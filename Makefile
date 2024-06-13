@@ -79,7 +79,7 @@ aio: deploy_aio deploy_nontls_listener remove_apps deploy_app_orderprocessor dep
 
 deploy_aio:
 	@echo "Deploying aio app..."
-	sh ./deployment/deploy-aio.sh
+	bash ./deployment/deploy-aio.sh
 
 remove_apps:
 	@echo "Removing apps..."
