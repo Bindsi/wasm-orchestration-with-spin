@@ -78,7 +78,7 @@ build_push_app_images:
 aio: deploy_aio deploy_nontls_listener remove_apps deploy_app_orderprocessor deploy_app_fulfilmentprocessor
 
 deploy_aio:
-	@echo "Deploying aio app..."
+	@echo "Deploying AIO..."
 	bash ./deployment/deploy-aio.sh
 
 remove_apps:
