@@ -1,14 +1,23 @@
 #! /bin/bash
 
 export CLUSTER_NAME=wasm-aio
+export STORAGE_ACCOUNT_NAME=sawasmaio
+export SCHEMA_REGISTRY_NAME=sr-wasm-aio
 export RESOURCE_GROUP=rg-wasm-aio
 export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 export LOCATION=westeurope
 
+# register providers
+az provider register -n "Microsoft.ExtendedLocation"
+az provider register -n "Microsoft.Kubernetes"
+az provider register -n "Microsoft.KubernetesConfiguration"
+az provider register -n "Microsoft.IoTOperations"
+az provider register -n "Microsoft.DeviceRegistry"
+
 # install CLI extensions
 echo "Installing CLI extensions..."
-az extension add --name connectedk8s;
-az extension add --name azure-iot-ops;
+az extension add --upgrade --name connectedk8s --yes
+az extension add --upgrade --name azure-iot-ops --version 0.8.0b1 --yes
 
 # create resource group
 if [ ! $(az group exists -n $RESOURCE_GROUP) ]; then
@@ -28,10 +37,15 @@ export OBJECT_ID=$(az ad sp show --id bc313c14-388c-4e7d-a58e-70017303ee3b --que
 echo "Enabling custom location support on cluster $CLUSTER_NAME..."
 az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --custom-locations-oid $OBJECT_ID --features cluster-connect custom-locations
 
-# create keyvault
-echo "Creating keyvault..."
-az keyvault create --enable-rbac-authorization false --name ${CLUSTER_NAME:0:24} --resource-group $RESOURCE_GROUP
+# create storage account
+echo "Creating storage account"
+saId=$(az storage account create -n $STORAGE_ACCOUNT_NAME -g $RESOURCE_GROUP --enable-hierarchical-namespace -o tsv --query id)
+
+# create schema registry
+echo "Creating schema registry..."
+srId=$(az iot ops schema registry create -n $SCHEMA_REGISTRY_NAME -g $RESOURCE_GROUP --registry-namespace $SCHEMA_REGISTRY_NAME --sa-resource-id $saId -o tsv --query id)
 
 # deploy AIO
 echo "Deploying AIO..."
-az iot ops init --include-dp --simulate-plc --cluster $CLUSTER_NAME --resource-group $RESOURCE_GROUP --kv-id $(az keyvault show --name ${CLUSTER_NAME:0:24} -o tsv --query id)
+az iot ops init --debug --cluster $CLUSTER_NAME -g $RESOURCE_GROUP
+az iot ops create -n $CLUSTER_NAME --cluster $CLUSTER_NAME -g $RESOURCE_GROUP --sr-resource-id $srId --kubernetes-distro K3s --add-insecure-listener

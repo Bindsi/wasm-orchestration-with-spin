@@ -1,5 +1,8 @@
 # Mixed Workloads with Web Assemblies (Spin) & Containers in Kubernetes
 
+> [!IMPORTANT]  
+> This repository is compatible with Azure IoT Operations [v0.8.32](https://github.com/Azure/azure-iot-operations/releases/tag/v0.8.32).
+
 ## Background
 
 Web assembly (Wasm) is positioned to be the next iteration of serverless compute ecosystem, the serverless aspect of Wasm is hugely attractive as it allows you to write functions in a decoupled and portable manner. Decoupled, because you write functions' code which is not dependent on the host and environment (cloud provider bindings) it's running in, Matt Butcher from Fermyon wrote an amazing article on this [here](https://www.fermyon.com/blog/next-generation-of-serverless-is-happening?utm_content=251765820&utm_medium=social&utm_source=twitter&hss_channel=tw-1444404500437995520) which sets the context right away.

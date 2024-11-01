@@ -1,9 +1,5 @@
 #! /bin/bash
 
-# deploy non-tls broker listener
-echo "Deploying non-tls broker listener..."
-kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/explore-iot-operations/main/samples/quickstarts/az-mqtt-non-tls-listener.yaml -n azure-iot-operations
-
 sleep 10
 # replace the mqtt address in the orderprocessor and fulfilmentprocessor spin.toml files
 echo "Replacing mqtt address..."
